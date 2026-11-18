@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebProxy</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, sans-serif; background: #0b1226; color: #fff; }
+    header { display: flex; align-items: center; gap: 12px; padding: 18px 6%; background: #111d3b; border-bottom: 1px solid #26365e; }
+    .logo { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: #2870ed; font-size: 21px; }
+    .brand { font-weight: 700; font-size: 20px; }
+    main { width: min(850px, 92%); margin: 10vh auto 40px; text-align: center; }
+    h1 { font-size: clamp(32px, 6vw, 52px); margin: 0 0 12px; }
+    p { color: #b9c7e6; line-height: 1.6; }
+    form { display: flex; gap: 9px; margin: 28px auto 14px; padding: 8px; background: white; border-radius: 14px; max-width: 720px; }
+    input { min-width: 0; flex: 1; border: 0; outline: 0; padding: 12px; font-size: 16px; color: #18233d; }
+    button { border: 0; border-radius: 10px; padding: 0 22px; background: #2870ed; color: white; font-weight: 700; cursor: pointer; }
+    button:hover { background: #185bd0; }
+    .note { font-size: 13px; color: #91a4cd; }
+    .panel { margin-top: 34px; padding: 18px; border: 1px solid #26365e; border-radius: 14px; background: #111d3b; text-align: left; }
+    #status { color: #cbd7f2; min-height: 24px; overflow-wrap: anywhere; }
+    @media (max-width: 520px) { form { flex-direction: column; background: transparent; padding: 0; } input { border-radius: 10px; padding: 16px; } button { min-height: 48px; } }
+  </style>
+</head>
+<body>
+  <header><div class="logo">◎</div><div class="brand">WebProxy</div></header>
+  <main>
+    <h1>Browse the web.</h1>
+    <p>A simple browser-based viewer for websites on this server's approved list.</p>
+    <form id="form">
+      <input id="address" type="text" placeholder="https://example.com" autocomplete="url" required>
+      <button type="submit">Go&nbsp; →</button>
+    </form>
+    <div class="note">Only websites approved by the server owner can be opened.</div>
+    <section class="panel">
+      <strong>How it works</strong>
+      <p id="status">Enter an approved website address to open it.</p>
+    </section>
+  </main>
+  <script>
+    const form = document.getElementById("form");
+    const input = document.getElementById("address");
+    const status = document.getElementById("status");
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      let url;
+      try {
+        url = new URL(input.value.includes("://") ? input.value : "https://" + input.value);
+      } catch {
+        status.textContent = "Please enter a valid website address.";
+        return;
+      }
+      if (!["http:", "https:"].includes(url.protocol)) {
+        status.textContent = "Only HTTP and HTTPS addresses are supported.";
+        return;
+      }
+      status.textContent = "Opening " + url.hostname + "…";
+      window.location.href = "/view?url=" + encodeURIComponent(url.href);
+    });
+  </script>
+</body>
+</html>
